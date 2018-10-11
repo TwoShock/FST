@@ -2,37 +2,40 @@
 #include "Node.h"
 #include <vector>
 
-template  <class Data>
+template  <class DataIn,class DataOut,class Tracker>
 class FST{
-    private:
-    Edge<Data> getValidEdge(Node<Data>& n){
+private:
+    Edge<DataIn,DataOut,Tracker> getValidEdge(Node<DataIn,DataOut,Tracker>& n){
         auto it = n.edges.begin();
         while (it != n.edges.end()) {
-            if (it->sourceID == n.getID() && it->exp(input)) {
+            if (it->sourceID == n.getID() && it->exp(input,inputTracker)) {
                 return *it;
             }
             it++;
         }
-        return Edge<Data>();
+        return Edge<DataIn,DataOut,Tracker>();
     }
-    public:
-    vector<Node<Data>> nodes;
-    Node<Data> currentNode;
-    Node<Data> intialNode;
-    Data input;
-    FST(Node<Data> intialNode,vector<Node<Data>> nodes,Data input){
+public:
+    vector<Node<DataIn,DataOut,Tracker>> nodes;
+    Node<DataIn,DataOut,Tracker> currentNode;
+    Node<DataIn,DataOut,Tracker> intialNode;
+    DataIn input;
+    DataOut output;
+    Tracker inputTracker;
+    
+    FST(Node<DataIn,DataOut,Tracker> intialNode,vector<Node<DataIn,DataOut,Tracker>> nodes,DataIn input){
         this->intialNode = intialNode;
         this->nodes = nodes;
         this->input = input;
         currentNode = this->intialNode;
     }
     int transition(){
-        Edge<Data> validEdge = getValidEdge(currentNode);
+        Edge<DataIn,DataOut,Tracker> validEdge = getValidEdge(currentNode);
         if (validEdge.isNull()) {
             cout<<"FST is deadlocked\n";
             return -1;
         }
-        validEdge.act(input);
+        validEdge.act(input,output,inputTracker);
         currentNode = nodes[validEdge.destinationIndex];
         return 0;
     }

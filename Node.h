@@ -5,15 +5,16 @@
 #include <iostream>
 using namespace std;
 
-template<class Data>
+template<class DataIn,class DataOut,class Tracker>
 class Node{
-    private:
+private:
     string id;
     string name;
-    list<Edge<Data>> edges; 
-    public:
+public:
     static unsigned int count;
-
+    list<Edge<DataIn,DataOut,Tracker>> edges;
+    typedef bool(*Condition)(DataIn& data,Tracker& inputTracker);
+    typedef void(*Action)(DataIn& input,DataOut& output,Tracker& inputTracker);
     Node(){
         count++;
         id = "N" + to_string(count);
@@ -35,17 +36,17 @@ class Node{
     bool operator ==(const Node& rhs){
         return this->id == rhs.id;
     }
-    void operator =(const Node<Data>&rhs){
+    void operator =(const Node<DataIn,DataOut,Tracker>&rhs){
         this->id = rhs.id;
         this->edges = rhs.edges;
     }
-    void pushEdge(int destinationIndex,Condition<Data> expression,Action<Data> action){
-        edges.push_back(Edge(this->id,destinationIndex,expression,action));
+    void pushEdge(int destinationIndex,Condition exp,Action act){
+        edges.push_back(Edge<DataIn,DataOut,Tracker>(this->id,destinationIndex,exp,act));
     }
     friend ostream& operator<<(ostream& os,Node node){
         os<<node.id;
         return os;
-    }    
+    }
 };
-template<class Data>
-unsigned int Node<Data>::count = 0;
+template<class DataIn,class DataOut,class Tracker>
+unsigned int Node<DataIn,DataOut,Tracker>::count = 0;
