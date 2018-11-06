@@ -8,5 +8,4 @@ This is a generic Finite State Transducer written in C++.
 4) Each edge has condtions and actions which are defined in the TransitionsConditions.h file
 5) Make sure to pass in your input data to the FST object 
 6) Run fst.simulate(n) where n is a integer number of steps
-# Example:
-```
+
